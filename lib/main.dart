@@ -1,13 +1,14 @@
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:posting_chatting_app_in_flutter/controller/chatting_controller.dart';
+import 'views/signUp.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const MyApp());
-  final chatController = Get.put(ChattingController());
 }
 
 class MyApp extends StatelessWidget {
@@ -16,78 +17,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final ChattingController socialMediaController = Get.put(ChattingController());
+
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Social Media',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: const Color(0xFF1a2f45),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-  final ChattingController _chatController = Get.find();
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // _chatController.testing();
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'You have pushed the button this many times:',style: Theme.of(context).textTheme.titleMedium,
-            ),
-            Text(
-              _chatController.check.value,
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            Text(
-              _chatController.check2.value,
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            Text(
-              _chatController.check3.value,
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          _chatController.testing();
-          // _chatController.apiTesting2();
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      home: const SignUp(),
     );
   }
 }
