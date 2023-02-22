@@ -26,7 +26,7 @@ class UserModel{
       userId: doc['user_id'],
       userName: doc['display_name'],
       date: doc['date'],
-      userImage: doc['user_id'],
+      userImage: doc['image_url'],
       userIsAdmin: doc['isAdmin'],
       userEmail: doc['user_email'],
       userFollowers: doc['user_followers'],

@@ -23,6 +23,7 @@ class ChattingController extends GetxController{
   late TextEditingController messageInputText;
   var appVersion = ''.obs;
   var appBuild = ''.obs;
+  var chatID = ''.obs;
 
   @override
   void onInit() {
@@ -87,24 +88,29 @@ class ChattingController extends GetxController{
   }
 
 
-  Future<void> showChat(String senderId, String receiverID) async {
+  Future<void> showChat(String senderId, String receiverID, String senderImage) async {
+    chatID.value = '$senderId+$receiverID';
     if(chatList.isEmpty){
-      DocumentReference dc = chatRef.doc('$senderId+$receiverID');
+      DocumentReference dc = chatRef.doc(chatID.value);
       Map<String, dynamic> chatRecord={
-        "chatId" : '$senderId+$receiverID',
+        "chatId" : chatID.value,
         "senderID": senderId,
         "receiverID": receiverID,
+        "receiverImage": currentUser.value.userImage,
+        "senderImage": senderImage,
       };
       dc.set(chatRecord).whenComplete((){});
     }
     else{
       for (int c=0; c<=chatList.length; c++){
-        if(chatList[c] != senderId+receiverID || chatList[c] != receiverID+senderId){
-          DocumentReference dc = chatRef.doc('$senderId+$receiverID');
+        if(chatList[c] != chatID.value || chatList[c] != chatID.value){
+          DocumentReference dc = chatRef.doc(chatID.value);
           Map<String, dynamic> chatRecord={
-            "chatId" : '$senderId+$receiverID',
+            "chatId" : chatID.value,
             "senderID": senderId,
             "receiverID": receiverID,
+            "receiverImage": currentUser.value.userImage,
+            "senderImage": senderImage,
           };
           dc.set(chatRecord).whenComplete((){});
         }
@@ -117,17 +123,23 @@ class ChattingController extends GetxController{
 
 
   }
-
   Future<void> startChatting(String chatID) async {
     QuerySnapshot<Map<String,dynamic>> doc = await chatRef.doc(chatID).collection('messages').get();
-    // doc.docs.forEach((e) {
-    //   print(e.data());
-    //   conversationList.value = MessageModel.fromDocument(e.data());
-    //   // conversationList.add(MessageModel.fromDocument(e.data()));
-    // });
     conversationList.value = doc.docs.map((e) => MessageModel.fromDocument(e.data())).toList();
-    // print("Chat printing--------- ${conversationList[0].message}");
   }
+  Future<void> sendMessage(String userId) async {
+    DocumentReference dc = chatRef.doc(chatID.value).collection('messages').doc();
+    Map<String, dynamic> addMessage={
+      "message": messageInputText.text,
+      "messageID": userId,
+      "time": DateTime.now().toString(),
+    };
+    dc.set(addMessage).then((value) {
+      messageInputText.clear();
+      startChatting(chatID.value);
+    });
+  }
+
 
   Future<void> getAppVersion() async{
     PackageInfo packageInfo = await PackageInfo.fromPlatform();

@@ -14,13 +14,13 @@ class ConversationScreen extends StatefulWidget {
 
 class _ConversationScreenState extends State<ConversationScreen> {
   final ChattingController chatController = Get.find();
-
+  final arg = Get.arguments;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
           backgroundColor: Colors.white,
-          appBar: AppBar(),
+          appBar: AppBar(title: Text('${arg['senderName']}', style: const TextStyle(color: Colors.white, fontSize: 15)), backgroundColor: Theme.of(context).primaryColor),
           body: Container(
             width: Get.width,
             height: Get.height,
@@ -28,37 +28,29 @@ class _ConversationScreenState extends State<ConversationScreen> {
             child: Column(
               children: [
                 Expanded(
-                    child: ListView.builder(
+                    child: Obx(()=>ListView.builder(
                         reverse: true,
                         physics: const BouncingScrollPhysics(),
                         itemCount: chatController.conversationList.length,
                         itemBuilder: (context, index) {
                           return Container(
-                              padding:
-                                  const EdgeInsets.only(right: 10, left: 10),
+                              padding: const EdgeInsets.only(right: 10, left: 10),
                               child: Row(
-                                mainAxisAlignment: chatController
-                                            .conversationList[index].messageID ==
-                                    chatController.userId.value
+                                mainAxisAlignment: chatController.conversationList[index].messageID == chatController.userId.value
                                     ? MainAxisAlignment.end
                                     : MainAxisAlignment.start,
                                 children: [
-                                  chatController
-                                      .conversationList[index].messageID !=
-                                      chatController.userId.value
+                                  chatController.conversationList[index].messageID != chatController.userId.value
                                       ? Container(
                                           height: 30,
                                           width: 30,
-                                          // child: const CircleAvatar(
-                                          //   // backgroundColor: Colors.brown,
-                                          //   backgroundImage: AssetImage(
-                                          //       'assets/images/bot.png'),
-                                          // ),
+                                          child: CircleAvatar(
+                                            // backgroundColor: Colors.brown,
+                                            backgroundImage: NetworkImage(arg['senderImage']),
+                                          ),
                                         )
                                       : const SizedBox(),
-                                  chatController
-                                      .conversationList[index].messageID ==
-                                      chatController.userId.value
+                                  chatController.conversationList[index].messageID == chatController.userId.value
                                       ? Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Bubble(
@@ -101,23 +93,20 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                             radius: const Radius.circular(15),
                                           ),
                                         ),
-                                  chatController
-                                      .conversationList[index].messageID ==
-                                      chatController.userId.value
+                                  chatController.conversationList[index].messageID == chatController.userId.value
                                       ? Container(
                                           height: 30,
                                           width: 30,
-                                          // child: CircleAvatar(
-                                          //   // backgroundColor: Colors.green,
-                                          //   backgroundImage: NetworkImage(
-                                          //       _userController
-                                          //           .userImage.value),
-                                          // ),
+                                          child: CircleAvatar(
+                                            // backgroundColor: Colors.green,
+                                            backgroundImage: NetworkImage(
+                                                chatController.currentUser.value.userImage!),
+                                          ),
                                         )
                                       : const SizedBox()
                                 ],
                               ));
-                        })),
+                        }))),
                 const Divider(),
                 Container(
                   child: ListTile(
@@ -134,7 +123,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       suffixIcon: IconButton(
                           color: Theme.of(context).primaryColor,
                           iconSize: 25.0,
-                          onPressed: () {},
+                          onPressed: () {
+                            chatController.sendMessage(chatController.currentUser.value.userId!);
+                          },
                           icon: const Icon(
                             Icons.send,
                           )),
