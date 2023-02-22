@@ -1,8 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:posting_chatting_app_in_flutter/controller/chatting_controller.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
   final chatController = Get.put(ChattingController());
 }
@@ -42,12 +45,12 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
   }
-  final ChattingController chatController = Get.find();
+  final ChattingController _chatController = Get.find();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    chatController.testing();
+    // _chatController.testing();
   }
   @override
   Widget build(BuildContext context) {
@@ -58,16 +61,20 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: [
             Text(
               'You have pushed the button this many times:',style: Theme.of(context).textTheme.titleMedium,
             ),
             Text(
-              chatController.check.value,
+              _chatController.check.value,
               style: Theme.of(context).textTheme.headline4,
             ),
             Text(
-              chatController.check2.value,
+              _chatController.check2.value,
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            Text(
+              _chatController.check3.value,
               style: Theme.of(context).textTheme.headline4,
             ),
           ],
@@ -75,7 +82,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-          chatController.apiTesting();
+          _chatController.testing();
+          // _chatController.apiTesting2();
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
