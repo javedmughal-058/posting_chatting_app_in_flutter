@@ -59,6 +59,7 @@ class UnAuthenticated extends StatelessWidget {
                         minimumSize: MaterialStateProperty.all(Size(size.width*0.5, 40.0)),
                       ),
                       onPressed: (){
+                        chatController.isLoading.value = true;
                         chatController.login();
                       },
                       child: Row(
@@ -74,6 +75,7 @@ class UnAuthenticated extends StatelessWidget {
               SizedBox(height: size.height*0.01,),
               const Text('Join with Single click',),
               const Spacer(),
+              Obx(()=>chatController.isLoading.value ? CircularProgressIndicator(color: Theme.of(context).primaryColor,): const SizedBox()),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children:  const[

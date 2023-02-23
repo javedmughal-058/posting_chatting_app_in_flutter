@@ -35,7 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
           final userData = chatController.userList[index];
         return GestureDetector(
           onTap: (){
-            chatController.showChat(chatController.userId.value, userData['user_id'], userData['image_url']).then((_) {
+            chatController.showChat(chatController.userId.value, userData['user_id'], userData['image_url'], userData['display_name']).then((_) {
               chatController.startChatting('${chatController.userId.value}+${userData['user_id']}').then((_) {
                 Get.to(()=>const ConversationScreen(), arguments: {"senderImage": userData['image_url'],"senderName" : userData['display_name']});
               });

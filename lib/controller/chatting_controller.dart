@@ -12,6 +12,7 @@ class ChattingController extends GetxController{
 
   var userId = ''.obs;
   var isAuth = false.obs;
+  var isLoading =false.obs;
   var dateValue = DateTime.now().toString();
   var currentUser = UserModel().obs;
   final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -31,6 +32,7 @@ class ChattingController extends GetxController{
     super.onInit();
     messageInputText = TextEditingController();
     googleSignIn.onCurrentUserChanged.listen((account) {
+      // isLoading.value = true;
       if(account !=null){
         userId.value = account.id;
         DocumentReference dc = userRef.doc(userId.value);
@@ -46,14 +48,19 @@ class ChattingController extends GetxController{
           "user_id": userId.value,
         };
         dc.set(record).whenComplete((){
-          const AdvanceSnackBar(
-            message: "Successfully Login",
-            mode: Mode.ADVANCE,
-            duration: Duration(seconds: 3),
-            bgColor: Colors.green,
-            textColor: Colors.white,
-          );
-          getCurrentUser().then((value) =>isAuth.value = true);
+
+          // const AdvanceSnackBar(
+          //   message: "Successfully Login",
+          //   mode: Mode.ADVANCE,
+          //   duration: Duration(seconds: 3),
+          //   bgColor: Colors.green,
+          //   textColor: Colors.white,
+          // );
+          getCurrentUser().then((value) {
+            isLoading.value = false;
+            isAuth.value = true;
+          });
+
         });
 
       }
@@ -72,6 +79,7 @@ class ChattingController extends GetxController{
   Future<void> getUsers() async{
     userList.clear();
     userRef.get().then((value){
+      getChats();
       for (var element in value.docs) {
         if(element.data()['user_id']!=userId.value){
           userList.add(element.data());
@@ -80,42 +88,50 @@ class ChattingController extends GetxController{
     });
   }
   Future<void> getChats() async {
+    chatList.clear();
     chatRef.get().then((value){
       for (var element in value.docs) {
         chatList.add(element.data()['chatId']);
+        print(chatList);
       }
     });
   }
 
 
-  Future<void> showChat(String senderId, String receiverID, String senderImage) async {
+  Future<void> showChat(String senderId, String receiverID, String senderImage, String senderName) async {
     chatID.value = '$senderId+$receiverID';
+    print('Sender------$senderId');
+    print('receiver----$receiverID');
     if(chatList.isEmpty){
+      print('here');
       DocumentReference dc = chatRef.doc(chatID.value);
       Map<String, dynamic> chatRecord={
         "chatId" : chatID.value,
-        "senderID": senderId,
-        "receiverID": receiverID,
+        "senderName": senderName,
+        "receiverName": currentUser.value.userName,
         "receiverImage": currentUser.value.userImage,
         "senderImage": senderImage,
       };
       dc.set(chatRecord).whenComplete((){});
     }
     else{
-      for (int c=0; c<=chatList.length; c++){
-        if(chatList[c] != chatID.value || chatList[c] != chatID.value){
+      for (int c=0; c<chatList.length; c++){
+        // print(chatList[c]);
+        if(chatList[c] == '$senderId+$receiverID' || chatList[c] == '$receiverID+$senderId'){
+          print('if');
+          break;
+        }
+        else{
+          print('else');
           DocumentReference dc = chatRef.doc(chatID.value);
           Map<String, dynamic> chatRecord={
             "chatId" : chatID.value,
-            "senderID": senderId,
-            "receiverID": receiverID,
+            "senderName": senderName,
+            "receiverName": currentUser.value.userName,
             "receiverImage": currentUser.value.userImage,
             "senderImage": senderImage,
           };
           dc.set(chatRecord).whenComplete((){});
-        }
-        else{
-
         }
       }
     }
