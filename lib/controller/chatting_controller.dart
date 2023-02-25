@@ -92,13 +92,15 @@ class ChattingController extends GetxController{
     chatRef.get().then((value){
       for (var element in value.docs) {
         chatList.add(element.data()['chatId']);
-        print(chatList);
+
       }
+      print(chatList);
     });
   }
 
 
   Future<void> showChat(String senderId, String receiverID, String senderImage, String senderName) async {
+
     chatID.value = '$senderId+$receiverID';
     print('Sender------$senderId');
     print('receiver----$receiverID');
@@ -119,6 +121,17 @@ class ChattingController extends GetxController{
         // print(chatList[c]);
         if(chatList[c] == '$senderId+$receiverID' || chatList[c] == '$receiverID+$senderId'){
           print('if');
+          var splitData = chatList[c].toString().split('+');
+          print(splitData);
+          if(splitData[0] == senderId){
+            print('match');
+            chatID.value = '${splitData[0]}+${splitData[1]}';
+          }
+          else if(splitData[0] == receiverID){
+            chatID.value = '${splitData[0]}+${splitData[1]}';
+          }
+          print(chatID.value);
+          startChatting(chatID.value);
           break;
         }
         else{

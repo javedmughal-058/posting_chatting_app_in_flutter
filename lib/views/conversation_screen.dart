@@ -59,18 +59,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                             color: const Color.fromRGBO(
                                                 195, 246, 202, 1.0),
                                             child: SizedBox(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.4,
-                                              child: Text(
-                                                  chatController
-                                                      .conversationList[index]
-                                                      .message!,
-                                                  maxLines: 3,
-                                                  softWrap: true,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                              width: MediaQuery.of(context).size.width * 0.4,
+                                              child: Text(chatController.conversationList[index].message!,
+                                                  // maxLines: 3,
+                                                  // softWrap: true,
+                                                  // overflow: TextOverflow.ellipsis,
                                                   textAlign: TextAlign.left,
                                                   style: const TextStyle(
                                                       fontSize: 12)),
@@ -84,11 +77,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                           child: Bubble(
                                             showNip: true,
                                             nip: BubbleNip.leftBottom,
-                                            color: Theme.of(context)
-                                                .primaryColor
-                                                .withOpacity(0.2),
-                                            child:Text('${ chatController
-                                                .conversationList[index].message}'),
+                                            color: Theme.of(context).primaryColor.withOpacity(0.2),
+                                            child: SizedBox(
+                                              width: MediaQuery.of(context).size.width * 0.4,
+                                              child: Text('${chatController.conversationList[index].message}'),
+                                            ),
                                             elevation: 0.0,
                                             radius: const Radius.circular(15),
                                           ),

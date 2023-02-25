@@ -112,8 +112,8 @@ class _AuthenticatedState extends State<Authenticated> {
                       currentIndex: index,
                       items: [
                         FloatingNavbarItem(icon: Icons.home, title: 'Home'),
-                        FloatingNavbarItem(
-                            icon: Icons.chat_bubble_outline, title: 'Profile'),
+                        FloatingNavbarItem(icon: Icons.file_upload_outlined, title: 'Upload'),
+                        FloatingNavbarItem(icon: Icons.chat_bubble_outline, title: 'Profile'),
                       ],
                     ),
                 ),
