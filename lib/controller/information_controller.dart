@@ -19,7 +19,8 @@ class InformationController extends GetxController {
 
 
   var selectImage = false.obs;
-
+  var showUploadPost = false.obs;
+  var isUploading = false.obs;
   @override
   void onInit() {
     // TODO: implement onInit

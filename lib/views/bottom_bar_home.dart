@@ -23,7 +23,7 @@ class _AuthenticatedState extends State<Authenticated> {
   final ChattingController chatController = Get.find();
   final InformationController _informationController = Get.find();
   int index = 0;
-
+  // bool showAllPost =false;
 
   @override
   void initState() {
@@ -37,9 +37,58 @@ class _AuthenticatedState extends State<Authenticated> {
     return Scaffold(
       drawer: const NavigationDrawerWidget(),
         appBar: AppBar(
+          // leadingWidth: 35,
+          // leading: Container(
+          //   alignment: Alignment.center,
+          //   child: CircleAvatar(
+          //     radius: 20,
+          //     // backgroundColor: Colors.green,
+          //     backgroundImage: NetworkImage(
+          //         chatController.currentUser.value.userImage!, scale: 1),
+          //   ),
+          // ),
           title: const Text('Social App'),
           backgroundColor: Theme.of(context).primaryColor,
           actions: [
+            IconButton(
+                onPressed: (){
+                  showGeneralDialog(
+                    barrierDismissible: true,
+                    barrierLabel: '',
+                    barrierColor: Colors.black38,
+                    transitionDuration: const Duration(milliseconds: 400),
+                    pageBuilder: (ctx, anim1, anim2) => AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      title: Text('Show All Post'),
+                      actions: [
+                        Checkbox(
+                          value: chatController.showAllPost.value,
+                          onChanged: (bool? value) {
+                            chatController.showAllPost.value = value!;
+                            Navigator.of(context).pop();
+                            if(chatController.showAllPost.value){
+                              chatController.getAllPost();
+                            }
+                            else{
+                              chatController.getUserPost();
+                            }
+                          },
+                        ), //Check
+                      ],
+                    ),
+                    transitionBuilder: (ctx, anim1, anim2, child) => BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 4 * anim1.value, sigmaY: 4 * anim1.value),
+                      child: FadeTransition(
+                        child: child,
+                        opacity: anim1,
+                      ),
+                    ),
+                    context: context,
+                  );
+
+                }, icon: const Icon(Icons.filter_list)),
             IconButton(
                 onPressed: (){
                   showGeneralDialog(
@@ -79,7 +128,8 @@ class _AuthenticatedState extends State<Authenticated> {
                     context: context,
                   );
 
-            }, icon: const Icon(Icons.exit_to_app))
+            }, icon: const Icon(Icons.exit_to_app)),
+
           ],
         ),
         body: SizedBox(

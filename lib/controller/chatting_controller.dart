@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:posting_chatting_app_in_flutter/model/message_model.dart';
+import 'package:posting_chatting_app_in_flutter/model/post_model.dart';
 import 'package:posting_chatting_app_in_flutter/model/user_model.dart';
 
 class ChattingController extends GetxController{
@@ -18,6 +19,7 @@ class ChattingController extends GetxController{
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final userRef = FirebaseFirestore.instance.collection('users');
   final chatRef = FirebaseFirestore.instance.collection('chats');
+  final postRef = FirebaseFirestore.instance.collection('posts');
   var userList = [].obs;
   var chatList = [].obs;
   var conversationList = <MessageModel>[].obs;
@@ -25,7 +27,10 @@ class ChattingController extends GetxController{
   var appVersion = ''.obs;
   var appBuild = ''.obs;
   var chatID = ''.obs;
-
+  var postDownloading = true.obs;
+  var postRecordList = <PostModel>[].obs;
+  var showAllPost = false.obs;
+  var postReferenceUserList = [].obs;
   @override
   void onInit() {
     // TODO: implement onInit
@@ -59,6 +64,9 @@ class ChattingController extends GetxController{
           getCurrentUser().then((value) {
             isLoading.value = false;
             isAuth.value = true;
+            getUserPost().then((value) {
+              postDownloading.value = false;
+            });
           });
 
         });
@@ -75,6 +83,31 @@ class ChattingController extends GetxController{
     DocumentSnapshot<Map<String,dynamic>> doc = await userRef.doc(userId.value).get();
     currentUser.value = UserModel.fromDocument(doc.data() ?? {});
     print("Controller printing ${currentUser.value.userName}");
+  }
+  Future<void> getUserPost() async{
+    postRecordList.clear();
+    QuerySnapshot<Map<String,dynamic>> doc = await postRef.doc(userId.value).collection('userPosts').get();
+    postRecordList.value = doc.docs.map((e) => PostModel.fromDocument(e.data())).toList();
+    print("post printing ${postRecordList[0].posturl}");
+  }
+  Future<void> getAllPost() async{
+    postReferenceUserList.clear();
+    postDownloading.value = true;
+    postRecordList.clear();
+    await postRef.get().then((value){
+      for (var element in value.docs) {
+        postReferenceUserList.add(element.data()['postUserID']);
+      }
+      print(postReferenceUserList.length);
+    });
+    print(postReferenceUserList[0]);
+    for(int i=0; i<postReferenceUserList.length; i++){
+      QuerySnapshot<Map<String,dynamic>> doc2 = await postRef.doc(postReferenceUserList[i]).collection('userPosts').get();
+      postRecordList.value = doc2.docs.map((e) => PostModel.fromDocument(e.data())).toList();
+    }
+    postDownloading.value = false;
+
+    print("post printing ${postRecordList[0].posturl}");
   }
   Future<void> getUsers() async{
     userList.clear();
